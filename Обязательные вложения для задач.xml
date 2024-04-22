@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hash>
+  <id type="integer">6</id>
+  <before-save>current_user = User.current
+project = @issue.project
+# Используем select для фильтрации массива, 7 - это id роли исполнителя
+roles = current_user.roles_for_project(project).select { |role| role.id != 7 }
+if @issue.attachments.empty? &amp;&amp; @issue.tracker_id == 2 &amp;&amp; roles.none?
+   # Выбрасываем исключение в случае пустого вложения
+   @issue.errors.add(:base, "Вложения обязательны, для продолжения прикрепите файлы")
+end</before-save>
+  <created-at type="dateTime">2024-04-18T07:44:32Z</created-at>
+  <updated-at type="dateTime">2024-04-22T05:11:46Z</updated-at>
+  <name>Обязательные вложения для задач</name>
+  <description>Не позволяет завершить редактирование задачи если не добавлено вложение.</description>
+  <string></string>
+  <position type="integer">6</position>
+  <integer type="integer">1</integer>
+  <after-save></after-save>
+  <is-for-all type="boolean">true</is-for-all>
+  <author></author>
+  <active type="boolean">true</active>
+  <observable>issue</observable>
+  <shared-code nil="true"/>
+  <before-add nil="true"/>
+  <after-add nil="true"/>
+  <before-remove nil="true"/>
+  <after-remove nil="true"/>
+  <before-destroy></before-destroy>
+  <after-destroy></after-destroy>
+  <exported-at>2024-04-22T10:01:09Z</exported-at>
+  <plugin-version>2.1.0</plugin-version>
+  <ruby-version>3.2.3-p157</ruby-version>
+  <rails-version>6.1.7.7</rails-version>
+</hash>

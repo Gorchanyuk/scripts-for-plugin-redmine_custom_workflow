@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hash>
+  <id type="integer">2</id>
+  <before-save></before-save>
+  <created-at type="dateTime">2024-04-16T07:14:30Z</created-at>
+  <updated-at type="dateTime">2024-04-18T12:51:36Z</updated-at>
+  <name>Создание задач утверждения закрытия задачи </name>
+  <description>При переводе задачи в статус "Аудит" создает в трекере "Акцептирование" новые задачи для пользователей с ролями "Куратор", "Руководитель проекта" и "Наблюдатель". Пока эти задачи не будут завершены, завершить исходную задачу будет нельзя.</description>
+  <string></string>
+  <position type="integer">2</position>
+  <integer type="integer">1</integer>
+  <after-save>if saved_change_to_status_id?
+  if @issue.status_id == 7 # Если статус изменился на "Аудит"
+    # ID ролей для создания задач
+    role_ids = [5, 9]
+
+    # Находим всех уникальных пользователей проекта, имеющих одну из ролей
+    unique_users = @issue.project.users.select do |user|
+      user.member_of?(@issue.project) &amp;&amp; (role_ids &amp; user.roles.map(&amp;:id)).any?
+    end
+    unique_users = unique_users.uniq
+    # Создаем задачу для каждого уникального пользователя
+    unique_users.each do |user|
+      new_issue = Issue.new(
+        project: @issue.project,
+        subject: "Новая задача для подтверждения закрытия задачи",
+        description: "Эта задача создана автоматически при изменении статуса родительской задачи #{@issue.id} на статус Аудит",
+        author: user,
+        assigned_to: user,
+        parent_id: @issue.id, # Устанавливаем родительскую задачу
+        tracker_id: Tracker.find(3), # Задаем трекер "Акцептирование"
+        priority_id: @issue.priority_id, # Копируем приоритет из родительской задачи
+        status_id: 3, # Устанавливаем статус "Новая"
+        start_date: Time.now,
+        due_date: Time.now + 1.week # Устанавливаем срок выполнения
+      )
+      if new_issue.save
+        Rails.logger.error "================================================================================================================================================================="
+      else
+        Rails.logger.error "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+      end
+    end
+  end
+end</after-save>
+  <is-for-all type="boolean">true</is-for-all>
+  <author></author>
+  <active type="boolean">true</active>
+  <observable>issue</observable>
+  <shared-code nil="true"/>
+  <before-add nil="true"/>
+  <after-add nil="true"/>
+  <before-remove nil="true"/>
+  <after-remove nil="true"/>
+  <before-destroy></before-destroy>
+  <after-destroy></after-destroy>
+  <exported-at>2024-04-22T10:00:50Z</exported-at>
+  <plugin-version>2.1.0</plugin-version>
+  <ruby-version>3.2.3-p157</ruby-version>
+  <rails-version>6.1.7.7</rails-version>
+</hash>

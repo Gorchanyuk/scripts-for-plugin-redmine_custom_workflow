@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hash>
+  <id type="integer">9</id>
+  <before-save># Создаем коллекцию для хранения комбинаций аккаунтов и категорий
+collection = {}
+# Добавляем в коллекцию записи, где ключи - это id для поля "Всего",
+# а значения - список суммируемых полей
+collection[44] = [36, 38, 40, 42]
+collection[45] = [37, 39, 41, 43]
+
+# Проходимся по коллекции
+collection.each do |key, values|
+  result = 0.0
+  values.each do |value|
+    result += custom_field_values.detect { |cfv| cfv.custom_field_id == value }&amp;.value.to_f || 0
+  end
+  
+  next if result == 0
+
+  total = custom_field_values.detect { |cfv| cfv.custom_field_id == key }
+  total.value = result
+  
+end</before-save>
+  <created-at type="dateTime">2024-04-22T08:44:27Z</created-at>
+  <updated-at type="dateTime">2024-04-22T08:52:49Z</updated-at>
+  <name>Подсчет общего значения счетов одной категории в проекте</name>
+  <description></description>
+  <string></string>
+  <position type="integer">8</position>
+  <integer type="integer">1</integer>
+  <after-save></after-save>
+  <is-for-all type="boolean">true</is-for-all>
+  <author></author>
+  <active type="boolean">true</active>
+  <observable>project</observable>
+  <shared-code nil="true"/>
+  <before-add nil="true"/>
+  <after-add nil="true"/>
+  <before-remove nil="true"/>
+  <after-remove nil="true"/>
+  <before-destroy></before-destroy>
+  <after-destroy></after-destroy>
+  <exported-at>2024-04-22T10:01:14Z</exported-at>
+  <plugin-version>2.1.0</plugin-version>
+  <ruby-version>3.2.3-p157</ruby-version>
+  <rails-version>6.1.7.7</rails-version>
+</hash>

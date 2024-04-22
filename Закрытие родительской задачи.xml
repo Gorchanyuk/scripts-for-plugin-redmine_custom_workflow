@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hash>
+  <id type="integer">3</id>
+  <before-save></before-save>
+  <created-at type="dateTime">2024-04-16T08:14:29Z</created-at>
+  <updated-at type="dateTime">2024-04-18T12:51:37Z</updated-at>
+  <name>Закрытие родительской задачи</name>
+  <description>При закрытии задач из трекера Акцептирование, проверяет закрыты ли другие задачи связанные с родительской задачей. Если все задачи закрыты, то закрывает родительскую задачу.</description>
+  <string></string>
+  <position type="integer">3</position>
+  <integer type="integer">1</integer>
+  <after-save>#Если в трекере "Акцептирование" статус задачи меняется на "Закрыта"
+if saved_change_to_status_id? &amp;&amp; @issue.status_id == 4 &amp;&amp; @issue.tracker_id == 3
+  # Получаем родительскую задачу
+  parent_issue = @issue.parent
+  return unless parent_issue #ыход если нет родительской задачи
+
+  # Получаем всех потомков родительской задачи
+  child_issues = parent_issue.children
+
+  # Проверяем, закрыты ли все потомки
+  all_children_closed = child_issues.all? { |issue| issue.status.is_closed? }
+
+  # Закрываем родительскую задачу, если все потомки закрыты
+  if all_children_closed
+    parent_issue.update(status_id: IssueStatus.where(is_closed: true).first.id)
+  end
+end
+ </after-save>
+  <is-for-all type="boolean">true</is-for-all>
+  <author></author>
+  <active type="boolean">true</active>
+  <observable>issue</observable>
+  <shared-code nil="true"/>
+  <before-add nil="true"/>
+  <after-add nil="true"/>
+  <before-remove nil="true"/>
+  <after-remove nil="true"/>
+  <before-destroy></before-destroy>
+  <after-destroy></after-destroy>
+  <exported-at>2024-04-22T10:00:59Z</exported-at>
+  <plugin-version>2.1.0</plugin-version>
+  <ruby-version>3.2.3-p157</ruby-version>
+  <rails-version>6.1.7.7</rails-version>
+</hash>

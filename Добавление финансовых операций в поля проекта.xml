@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hash>
+  <id type="integer">8</id>
+  <before-save># Создаем коллекцию для хранения комбинаций аккаунтов и категорий
+collection = {}
+# Добавляем в коллекцию записи, где ключи - это id полей проекта,
+# а значения - соответствующие им значения id полей задач
+collection[37] = 32
+collection[36] = 28
+collection[39] = 33
+collection[38] = 29
+collection[41] = 34
+collection[40] = 30
+collection[43] = 35
+collection[42] = 31
+
+# Проходимся по коллекции
+collection.each do |key, value|
+  new_value = custom_field_values.detect { |cfv| cfv.custom_field_id == value }&amp;.value.to_f || 0
+  old_value = custom_value_for(value)&amp;.value.to_f || 0
+  result = (new_value - old_value).round(2) # Округление до 2 знаков после запятой
+
+  # Пропускаем создание операции, если result равно 0
+  next if result == 0
+
+  project = Project.find(@issue.project_id)
+  # Ищем настраиваемое поле по его id
+  project_field_account = project.custom_field_values.find { |cfv| cfv.custom_field_id == key } 
+  if project_field_account
+    new_account_value = project_field_account.value.to_f + result
+
+    # Обновляем значение настраиваемого поля проекта
+    project_field_account.value = new_account_value
+
+    # Сохраняем изменения
+    project.save
+  end
+end</before-save>
+  <created-at type="dateTime">2024-04-22T06:28:15Z</created-at>
+  <updated-at type="dateTime">2024-04-22T08:52:45Z</updated-at>
+  <name>Добавление финансовых операций в поля проекта</name>
+  <description></description>
+  <string></string>
+  <position type="integer">7</position>
+  <integer type="integer">1</integer>
+  <after-save></after-save>
+  <is-for-all type="boolean">true</is-for-all>
+  <author></author>
+  <active type="boolean">true</active>
+  <observable>issue</observable>
+  <shared-code nil="true"/>
+  <before-add nil="true"/>
+  <after-add nil="true"/>
+  <before-remove nil="true"/>
+  <after-remove nil="true"/>
+  <before-destroy></before-destroy>
+  <after-destroy></after-destroy>
+  <exported-at>2024-04-22T10:01:11Z</exported-at>
+  <plugin-version>2.1.0</plugin-version>
+  <ruby-version>3.2.3-p157</ruby-version>
+  <rails-version>6.1.7.7</rails-version>
+</hash>

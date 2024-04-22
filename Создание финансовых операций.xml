@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hash>
+  <id type="integer">7</id>
+  <before-save>#Инициализируем переменные и сопоставляем счета с полями задач
+fed_bd_account = Account.find(1)
+obl_bd_account = Account.find(4)
+local_bd_account = Account.find(6)
+extrabudgetary_account = Account.find(8)
+
+fact = OperationCategory.find(2)
+plan = OperationCategory.find(1)
+# Создаем коллекцию для хранения комбинаций аккаунтов и категорий
+collection = {}
+# Добавляем в коллекцию записи, но только если значение не равно 0 и не является nil
+collection[[fed_bd_account, fact]] = 32
+collection[[fed_bd_account, plan]] = 28
+collection[[obl_bd_account, fact]] = 33
+collection[[obl_bd_account, plan]] = 29
+collection[[local_bd_account, fact]] = 34
+collection[[local_bd_account, plan]] = 30
+collection[[extrabudgetary_account, fact]] = 35
+collection[[extrabudgetary_account, plan]] = 31
+
+# Проходимся по коллекции
+collection.each do |key, value|
+  new_value = custom_field_values.detect { |cfv| cfv.custom_field_id == value }&amp;.value.to_f || 0
+  old_value = custom_value_for(value)&amp;.value.to_f || 0
+  result = (new_value - old_value).round(2) # Округление до 2 знаков после запятой
+
+  # Пропускаем создание операции, если result равно 0
+  next if result == 0
+
+  #Создаем новую операцию
+  operation = Operation.new(
+    account: key[0], # Счет, к которому относится операция
+    author: User.current, # Текущий пользователь как автор операции
+    operation_date: Time.zone.now, # Дата операции
+    category: key[1], # Категория операции
+    amount: result.abs, # Сумма операции
+    income: result &gt; 0, # Указываем, что это доход, если результат положительный
+    description: "Оплата за услуги: #{@issue.subject}", # Описание операции
+    )
+
+  operation.save
+end</before-save>
+  <created-at type="dateTime">2024-04-18T11:59:20Z</created-at>
+  <updated-at type="dateTime">2024-04-22T05:29:55Z</updated-at>
+  <name>Создание финансовых операций</name>
+  <description></description>
+  <string></string>
+  <position type="integer">1</position>
+  <integer type="integer">1</integer>
+  <after-save></after-save>
+  <is-for-all type="boolean">true</is-for-all>
+  <author></author>
+  <active type="boolean">true</active>
+  <observable>issue</observable>
+  <shared-code nil="true"/>
+  <before-add nil="true"/>
+  <after-add nil="true"/>
+  <before-remove nil="true"/>
+  <after-remove nil="true"/>
+  <before-destroy></before-destroy>
+  <after-destroy></after-destroy>
+  <exported-at>2024-04-22T10:00:39Z</exported-at>
+  <plugin-version>2.1.0</plugin-version>
+  <ruby-version>3.2.3-p157</ruby-version>
+  <rails-version>6.1.7.7</rails-version>
+</hash>

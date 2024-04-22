@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hash>
+  <id type="integer">5</id>
+  <before-save></before-save>
+  <created-at type="dateTime">2024-04-18T05:41:07Z</created-at>
+  <updated-at type="dateTime">2024-04-18T12:51:37Z</updated-at>
+  <name>Копирование пользовательских настроек</name>
+  <description>При создании нового пользователя ему копируется шаблон страницы другого пользователя, по умолчанию пользователя с id = 1</description>
+  <string></string>
+  <position type="integer">5</position>
+  <integer type="integer">1</integer>
+  <after-save>if @user.id
+  # Получаем настройки пользователя с id = 1
+  source_preferences = UserPreference.find_by(user_id: 1)
+  return unless source_preferences
+
+  # Ищем существующие настройки для вновь созданного пользователя
+  user_preferences = UserPreference.find_or_initialize_by(user_id: @user.id)
+  user_preferences.others = source_preferences.others
+  user_preferences.save!
+end
+</after-save>
+  <is-for-all type="boolean">false</is-for-all>
+  <author></author>
+  <active type="boolean">true</active>
+  <observable>user</observable>
+  <shared-code nil="true"/>
+  <before-add nil="true"/>
+  <after-add nil="true"/>
+  <before-remove nil="true"/>
+  <after-remove nil="true"/>
+  <before-destroy></before-destroy>
+  <after-destroy></after-destroy>
+  <exported-at>2024-04-22T10:01:06Z</exported-at>
+  <plugin-version>2.1.0</plugin-version>
+  <ruby-version>3.2.3-p157</ruby-version>
+  <rails-version>6.1.7.7</rails-version>
+</hash>

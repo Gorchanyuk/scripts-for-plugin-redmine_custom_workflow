@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hash>
+  <id type="integer">4</id>
+  <before-save># Вычисляем длительность работы в днях, если задача только создана или изменилось одно из полей start_date или due_date
+if self.new_record? || self.start_date_changed? || self.due_date_changed?
+ if self.start_date &amp;&amp; self.due_date
+    duration_days = (self.due_date - self.start_date).to_i
+    # Находим настраиваемое поле с ID 9 и обновляем его значение
+    custom_field_value = self.custom_field_values.find { |cfv| cfv.custom_field_id == 9 }
+    if custom_field_value
+      custom_field_value.value = duration_days.to_s # Обновляем значение, преобразуя длительность в строку, если это необходимо
+    end
+ end
+end</before-save>
+  <created-at type="dateTime">2024-04-17T08:55:36Z</created-at>
+  <updated-at type="dateTime">2024-04-18T12:51:37Z</updated-at>
+  <name>Расчет длительности работ</name>
+  <description>Автоматически рассчитывает длительность работ на основе дат начала и завершения задачи </description>
+  <string></string>
+  <position type="integer">4</position>
+  <integer type="integer">1</integer>
+  <after-save></after-save>
+  <is-for-all type="boolean">true</is-for-all>
+  <author></author>
+  <active type="boolean">true</active>
+  <observable>issue</observable>
+  <shared-code nil="true"/>
+  <before-add nil="true"/>
+  <after-add nil="true"/>
+  <before-remove nil="true"/>
+  <after-remove nil="true"/>
+  <before-destroy></before-destroy>
+  <after-destroy></after-destroy>
+  <exported-at>2024-04-22T10:01:03Z</exported-at>
+  <plugin-version>2.1.0</plugin-version>
+  <ruby-version>3.2.3-p157</ruby-version>
+  <rails-version>6.1.7.7</rails-version>
+</hash>

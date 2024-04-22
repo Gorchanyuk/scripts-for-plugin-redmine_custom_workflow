@@ -1,1 +1,3 @@
-# scripts-for-plugin-redmine_custom_workflow
+Скрипты для плагина Custom workflows 
+
+Скрипты привязаны к определенным полям по id элементов (смотри комментарии к скриптам)
